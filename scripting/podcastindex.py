@@ -5,9 +5,11 @@ import calendar
 from datetime import date
 import hashlib
 import json
+import sys
 import time
 import requests
 
+from mysql.connector import connect, Error
 
 api_key = 'WXRKPNKDNC3FKJNWLZYV'
 api_secret = 'MRZucBTzP9SJ3RWNuxGFcx^V4xYCwdh5ZFsku2EY'
@@ -50,6 +52,8 @@ with open("podcast_data.json", "r") as file:
     }
 """
 
+items = []
+
 for idx, val in enumerate(data):
     if(idx < 10):
         id = val["id"]
@@ -70,4 +74,77 @@ for idx, val in enumerate(data):
                 "drops": [x > 0 for x in weekdays],
                 "frequency": [x/sum(weekdays) for x in weekdays]
             }
-            print(json.dumps(info, indent=2))
+            items.append(info)
+
+print("item length: ", len(items))
+
+try:
+    with connect(
+        host="localhost",
+        user="root",
+        password="Naki1996ihg"
+    ) as con:
+        with con.cursor() as cursor:
+            for item in items:
+                insert_podcasts = f'''
+                    INSERT INTO podcastpill.podcasts
+                    (podcast_id, title, description, image)
+                    VALUES (
+                        "{item["id"]}", 
+                        "{item["title"]}", 
+                        "{item["description"]}", 
+                        "{item["image"]}"
+                    )
+                '''
+
+
+                cats = [""] * 4
+                for idx, element in enumerate(item["categories"].values()):
+                    cats[idx] = element
+                
+                insert_categories = f'''
+                    INSERT INTO podcastpill.categories
+                    (podcast_id, category1, category2, category3, category4)
+                    VALUES (
+                        "{item["id"]}", 
+                        "{cats[0]}", 
+                        "{cats[1]}", 
+                        "{cats[2]}", 
+                        "{cats[3]}"
+                    )
+                '''
+
+                drops = [0] * 7
+                for idx, element in enumerate(item["drops"]):
+                    if element is True:
+                        drops[idx] = 1
+
+                insert_drops = f'''
+                    INSERT INTO `podcastpill`.`drops`
+                    (`podcast_id`, `dropsMonday`, `dropsTuesday`,`dropsWednesday`,`dropsThursday`,`dropsFriday`,`dropsSaturday`,`dropsSunday`,`weights`)
+                    VALUES (
+                        "{item["id"]}", 
+                        "{drops[0]}", 
+                        "{drops[1]}", 
+                        "{drops[2]}", 
+                        "{drops[3]}",
+                        "{drops[4]}",
+                        "{drops[5]}",
+                        "{drops[6]}",
+                        "{item["frequency"]}"
+                    );                
+                '''
+
+                print(insert_categories)
+                print(insert_drops)
+
+
+                cursor.execute(insert_podcasts)
+                cursor.execute(insert_categories)
+                cursor.execute(insert_drops)
+                
+                con.commit()
+                sys.exit(0)
+        
+except Error as e:
+    print(e)
