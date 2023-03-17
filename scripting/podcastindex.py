@@ -11,6 +11,12 @@ import requests
 
 from mysql.connector import connect, Error
 
+def remove_html_tags(text):
+    """Remove html tags from a string"""
+    import re
+    clean = re.compile('<.*?>')
+    return re.sub(clean, '', text)
+
 api_key = 'WXRKPNKDNC3FKJNWLZYV'
 api_secret = 'MRZucBTzP9SJ3RWNuxGFcx^V4xYCwdh5ZFsku2EY'
 
@@ -55,9 +61,9 @@ with open("podcast_data.json", "r") as file:
 items = []
 
 for idx, val in enumerate(data):
-    if(idx < 10):
+    if(idx < 30):
         id = val["id"]
-        url = f"https://api.podcastindex.org/api/1.0/episodes/byfeedid?id={id}&max=40"
+        url = f"https://api.podcastindex.org/api/1.0/episodes/byfeedid?id={id}&max=30"
         r = requests.get(url, headers=headers)
         if r.status_code == 200:
             episodes = json.loads(r.text)
@@ -74,6 +80,7 @@ for idx, val in enumerate(data):
                 "drops": [x > 0 for x in weekdays],
                 "frequency": [x/sum(weekdays) for x in weekdays]
             }
+            print(f"added {val['title']}")
             items.append(info)
 
 print("item length: ", len(items))
@@ -86,21 +93,25 @@ try:
     ) as con:
         with con.cursor() as cursor:
             for item in items:
+                item["title"] = item["title"].replace("'", "").replace('"', '')
+                item["description"] = item["description"].replace("'", "").replace('"', '')
+
                 insert_podcasts = f'''
                     INSERT INTO podcastpill.podcasts
                     (podcast_id, title, description, image)
                     VALUES (
                         "{item["id"]}", 
                         "{item["title"]}", 
-                        "{item["description"]}", 
+                        "{remove_html_tags(item["description"])}", 
                         "{item["image"]}"
-                    )
+                    );
                 '''
 
 
                 cats = [""] * 4
                 for idx, element in enumerate(item["categories"].values()):
-                    cats[idx] = element
+                    if idx < 3:
+                        cats[idx] = element
                 
                 insert_categories = f'''
                     INSERT INTO podcastpill.categories
@@ -111,7 +122,7 @@ try:
                         "{cats[1]}", 
                         "{cats[2]}", 
                         "{cats[3]}"
-                    )
+                    );
                 '''
 
                 drops = [0] * 7
@@ -135,16 +146,12 @@ try:
                     );                
                 '''
 
-                print(insert_categories)
-                print(insert_drops)
-
-
                 cursor.execute(insert_podcasts)
                 cursor.execute(insert_categories)
                 cursor.execute(insert_drops)
                 
                 con.commit()
-                sys.exit(0)
+                print(f"pushed {item['title']} to DB")
         
 except Error as e:
     print(e)
