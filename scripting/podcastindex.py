@@ -61,10 +61,13 @@ for idx, val in enumerate(data):
             for y in episodes["items"]:
                 dt = date.fromtimestamp(y["datePublished"])
                 weekdays[dt.weekday()] += 1
-            title = val["title"]
-            drops = ""
-            for idx, day in enumerate(weekdays):
-                if day > 0:
-                    drops += f"{calendar.day_name[idx]}, "
-            print(f"{title}: {drops}")
-            print(f"=> {weekdays}")
+            info = {
+                "id": val["id"],
+                "title": val["title"],
+                "description": val["description"],
+                "image": val["image"],
+                "categories": val["categories"],
+                "drops": [x > 0 for x in weekdays],
+                "frequency": [x/sum(weekdays) for x in weekdays]
+            }
+            print(json.dumps(info, indent=2))
