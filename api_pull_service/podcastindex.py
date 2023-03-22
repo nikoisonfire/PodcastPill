@@ -131,20 +131,20 @@ try:
                 drops = numpy.multiply(drops, item["frequency"])
                 drops = drops.tolist()
 
-                insert_drops = f'''
+                insert_drops = '''
                     INSERT INTO `podcastpill`.`drops`
                     (`podcast_id`, `dropsMonday`, `dropsTuesday`,`dropsWednesday`,`dropsThursday`,`dropsFriday`,`dropsSaturday`,`dropsSunday`)
                     VALUES (
-                        "{item["id"]}", 
-                        "{drops[0]}", 
-                        "{drops[1]}", 
-                        "{drops[2]}", 
-                        "{drops[3]}",
-                        "{drops[4]}",
-                        "{drops[5]}",
-                        "{drops[6]}"
+                        "{id}", 
+                        "{0}", 
+                        "{1}", 
+                        "{2}", 
+                        "{3}",
+                        "{4}",
+                        "{5}",
+                        "{6}"
                     );                
-                '''
+                '''.format(id=item["id"], *drops)
 
                 cursor.execute(insert_drops)
 
