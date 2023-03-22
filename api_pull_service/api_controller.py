@@ -27,6 +27,8 @@ def calculate_auth_headers(environment):
         'Authorization': sha_1,
         'User-Agent': 'podtester-v1'
     }
+
+
 def pull_frequency_data(data, headers, numberOfPods):
     items = []
 
@@ -59,3 +61,4 @@ def pull_frequency_data(data, headers, numberOfPods):
                     weightedDrops=weighted
                 )
                 items.append(podcast)
+    return items
