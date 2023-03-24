@@ -1,3 +1,5 @@
+import logging
+
 from api_pull_service.Podcast import Podcast
 from typing import List
 from mysql.connector import connect, Error
@@ -57,6 +59,7 @@ def write_to_db(podcast_list: List[Podcast], environment):
                     cursor.execute(insert_drops)
 
                     con.commit()
+                    logging.info(f"Write {podcast.id} to DB done.")
 
     except Error as e:
-        print(e)
+        logging.exception("Error using MySQL")

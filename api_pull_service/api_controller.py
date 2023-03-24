@@ -1,5 +1,6 @@
 import hashlib
 import json
+import logging
 import time
 from datetime import date
 
@@ -10,6 +11,11 @@ from api_pull_service.utils import weigh_drops, remove_html_tags
 
 
 def calculate_auth_headers(environment):
+    if "PCI_API_KEY" not in environment:
+        return
+    if "PCI_API_SECRET" not in environment:
+        return
+
     api_key = environment["PCI_API_KEY"]
     api_secret = environment["PCI_API_SECRET"]
 
@@ -31,6 +37,8 @@ def calculate_auth_headers(environment):
 
 def pull_frequency_data(data, headers, numberOfPods):
     items = []
+
+    logging.info(f"Pulling {numberOfPods} items from Podcastindex API")
 
     for idx, val in enumerate(data):
         if idx < numberOfPods:

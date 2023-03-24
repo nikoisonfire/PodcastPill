@@ -1,4 +1,5 @@
 import sys
+import loggers
 
 from dotenv import dotenv_values
 
@@ -8,7 +9,9 @@ from api_pull_service.utils import load_file
 
 config = dotenv_values("../.env")
 
+
 def main():
+    # Re
     headers = calculate_auth_headers(config)
     data = load_file("podcast_data.json")
 
