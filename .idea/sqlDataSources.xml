@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DdlMappings">
+    <mapping uuid="02ab0d46-b517-4f2d-9c2c-50c90c82d838" name="podpill Mapping">
+      <data-sources db="ddcc22e3-d4bb-40c3-a187-ef2d2b4f52a3" ddl="94a3780e-739e-4cf6-9e4d-538901cc6268" />
+    </mapping>
+  </component>
+</project>

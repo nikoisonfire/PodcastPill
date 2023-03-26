@@ -15,9 +15,9 @@ def main():
     headers = calculate_auth_headers(config)
     data = load_file("podcast_data.json")
 
-    pod_data = pull_frequency_data(data, headers, 10)
+    pod_data = pull_frequency_data(data, headers, 5)
 
-    write_to_db(pod_data, config)
+    write_to_db(pod_data, "podpill.db")
 
     sys.exit(0)
 
