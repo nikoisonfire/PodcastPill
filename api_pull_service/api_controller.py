@@ -35,13 +35,13 @@ def calculate_auth_headers(environment):
     }
 
 
-def pull_frequency_data(data, headers, numberOfPods):
+def pull_frequency_data(data, headers, startIdx, iterations):
     items = []
 
-    logging.info(f"Pulling {numberOfPods} items from Podcastindex API")
+    logging.info(f"Start: {startIdx} - Total: {iterations} items from Podcastindex API")
 
-    for idx, val in enumerate(data):
-        if idx < numberOfPods:
+    for idx, val in enumerate(data, start=startIdx):
+        if idx < iterations:
             pod_id = val["id"]
             url = f"https://api.podcastindex.org/api/1.0/episodes/byfeedid?id={pod_id}&max=30"
             r = requests.get(url, headers=headers)
