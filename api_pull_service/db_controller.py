@@ -1,8 +1,9 @@
 import logging
 import sqlite3
+from typing import List
 
 from api_pull_service.Podcast import Podcast
-from typing import List
+
 
 def write_to_db(podcast_list: List[Podcast], path_to_db_file: str):
     try:
@@ -56,5 +57,15 @@ def write_to_db(podcast_list: List[Podcast], path_to_db_file: str):
                 con.commit()
                 logging.info(f"Write {podcast.id} to DB done.")
 
+    except sqlite3.Error as e:
+        logging.exception("Error using MySQL")
+
+
+def get_pod_ids_from_db(path_to_db_file: str) -> List[int]:
+    try:
+        with sqlite3.connect(path_to_db_file) as con:
+            cur = con.cursor()
+            cur.execute("SELECT podcast_id FROM podcasts")
+            return cur.fetchall()
     except sqlite3.Error as e:
         logging.exception("Error using MySQL")

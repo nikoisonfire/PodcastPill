@@ -1,4 +1,6 @@
 import sys
+import time
+
 import loggers
 
 from dotenv import dotenv_values
@@ -15,10 +17,14 @@ def main():
     headers = calculate_auth_headers(config)
     data = load_file("podcast_data.json")
 
-    pod_data = pull_frequency_data(data, headers, 5)
+    t1 = time.perf_counter()
 
-    write_to_db(pod_data, "podpill.db")
+    pod_data = pull_frequency_data(data, headers, 0, 20)
 
+    t2 = time.perf_counter()
+    print(f"Finished in {t2 - t1} seconds")
+
+    #write_to_db(pod_data, "podpill.db")
     sys.exit(0)
 
 
