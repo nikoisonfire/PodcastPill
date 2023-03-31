@@ -1,13 +1,10 @@
 import sys
 import time
 
-import loggers
-
 from dotenv import dotenv_values
 
-from api_pull_service.api_controller import calculate_auth_headers, pull_frequency_data
-from api_pull_service.db_controller import write_to_db
-from api_pull_service.utils import load_file
+from pull_service.api_controller import calculate_auth_headers, pull_frequency_data
+from pull_service.utils import load_file
 
 config = dotenv_values("../.env")
 
@@ -24,7 +21,7 @@ def main():
     t2 = time.perf_counter()
     print(f"Finished in {t2 - t1} seconds")
 
-    #write_to_db(pod_data, "podpill.db")
+    # write_to_db(pod_data, "podpill.db")
     sys.exit(0)
 
 

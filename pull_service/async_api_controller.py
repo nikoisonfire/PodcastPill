@@ -8,9 +8,9 @@ from datetime import date
 import aiohttp
 from dotenv import dotenv_values
 
-from api_pull_service.Podcast import Podcast
-from api_pull_service.db_controller import write_to_db
-from api_pull_service.utils import load_file, remove_html_tags, weigh_drops
+from db_service.db_controller import write_to_db
+from pull_service.Podcast import Podcast
+from pull_service.utils import load_file, remove_html_tags, weigh_drops
 
 
 def calculate_auth_headers(environment):

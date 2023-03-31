@@ -6,8 +6,8 @@ from datetime import date
 
 import requests
 
-from api_pull_service.Podcast import Podcast
-from api_pull_service.utils import weigh_drops, remove_html_tags
+from pull_service.Podcast import Podcast
+from pull_service.utils import weigh_drops, remove_html_tags
 
 
 def calculate_auth_headers(environment):

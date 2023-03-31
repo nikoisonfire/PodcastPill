@@ -2,7 +2,7 @@ import logging
 import sqlite3
 from typing import List
 
-from api_pull_service.Podcast import Podcast
+from pull_service.Podcast import Podcast
 
 
 def write_to_db(podcast_list: List[Podcast], path_to_db_file: str):
