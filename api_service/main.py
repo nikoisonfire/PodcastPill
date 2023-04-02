@@ -1,6 +1,9 @@
-from fastapi import FastAPI
+import logging
 
-from api_service import models
+from fastapi import FastAPI, Depends
+from sqlalchemy.orm import Session
+
+from api_service import models, crud
 from api_service.database import engine, SessionLocal
 
 models.Base.metadata.create_all(bind=engine)
@@ -13,6 +16,8 @@ def get_db():
     db = SessionLocal()
     try:
         yield db
+    except Exception as e:
+        logging.info(e)
     finally:
         db.close()
 
@@ -23,20 +28,22 @@ async def root():
 
 
 @app.get("/podcasts/{podcast_id}")
-async def get_podcast(podcast_id: int):
-    return {"podcast_id": podcast_id}
+async def get_podcast(podcast_id: int, db: Session = Depends(get_db)):
+    return crud.get_podcast(db, podcast_id=podcast_id)
 
 
 @app.get("/podcasts/random/{weekday}")
-async def get_random_podcast(weekday: str):
-    return {"weekday": weekday}
+async def get_random_podcast(weekday: str, db: Session = Depends(get_db)):
+    return crud.get_random_podcast(db, weekday=weekday)
 
 
 @app.get("/podcasts/byCategory/{category}")
-async def get_podcast_by_category(category: str):
-    return {"category": category}
+async def get_podcast_by_category(category: str, db: Session = Depends(get_db)):
+    return crud.get_podcasts_by_category(db, category=category)
 
 
 @app.get("/categories")
-async def get_categories():
-    return {"categories": ["category1", "category2", "category3"]}
+def get_categories(db: Session = Depends(get_db)):
+    return {
+        "queries": crud.get_categories(db)
+    }

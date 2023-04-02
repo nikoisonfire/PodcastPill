@@ -20,6 +20,9 @@ class Podcast(Base):
     description = Column(String, index=True)
     image = Column(String, index=True)
 
+    category = relationship("Category", back_populates="podcast")
+    drops = relationship("Drops", back_populates="podcast")
+
 
 @dataclass
 class Category(Base):
@@ -32,11 +35,11 @@ class Category(Base):
     id = Column(Integer, primary_key=True, index=True)
     podcast_id = Column(Integer, ForeignKey("podcasts.id"))
     category = Column(String, index=True)
-    podcast = relationship("Podcast", back_populates="categories")
+    podcast = relationship("Podcast", back_populates="category")
 
 
 @dataclass
-class Drop(Base):
+class Drops(Base):
     __tablename__ = "drops"
 
     id: int
