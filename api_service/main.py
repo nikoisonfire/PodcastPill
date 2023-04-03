@@ -3,8 +3,9 @@ import logging
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 
-from api_service import models, crud
-from api_service.database import engine, SessionLocal
+from api_service import crud, models
+from api_service.crud import get_all_podcasts
+from api_service.database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -23,8 +24,8 @@ def get_db():
 
 
 @app.get("/")
-async def root():
-    return {"message": "Hello World"}
+def root(db: Session = Depends(get_db)):
+    return get_all_podcasts(db)
 
 
 @app.get("/podcasts/{podcast_id}")
@@ -38,12 +39,12 @@ async def get_random_podcast(weekday: str, db: Session = Depends(get_db)):
 
 
 @app.get("/podcasts/byCategory/{category}")
-async def get_podcast_by_category(category: str, db: Session = Depends(get_db)):
-    return crud.get_podcasts_by_category(db, category=category)
+async def get_podcast_by_category(category: str, limit: int = 10, db: Session = Depends(get_db)):
+    return crud.get_podcasts_by_category(db, limit=limit, category=category)
 
 
 @app.get("/categories")
 def get_categories(db: Session = Depends(get_db)):
     return {
-        "queries": crud.get_categories(db)
+        "categories": crud.get_categories(db)
     }
