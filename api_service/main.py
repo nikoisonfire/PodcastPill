@@ -28,22 +28,22 @@ def root():
 
 
 @app.get("/podcasts/{podcast_id}")
-async def get_podcast(podcast_id: int, db: Session = Depends(get_db)):
+def get_podcast(podcast_id: int, db: Session = Depends(get_db)):
     return crud.get_podcast(db, podcast_id=podcast_id)
 
 
 @app.get("/podcasts")
-async def get_podcast(limit: int = 10, db: Session = Depends(get_db)):
+def get_podcast(limit: int = 10, db: Session = Depends(get_db)):
     return crud.get_all_podcasts(db, limit=limit)
 
 
 @app.get("/podcasts/random/{weekday}")
-async def get_random_podcast(weekday: str, db: Session = Depends(get_db)):
+def get_random_podcast(weekday: str, db: Session = Depends(get_db)):
     return crud.get_random_podcast(db, weekday=weekday)
 
 
 @app.get("/podcasts/byCategory/{category}")
-async def get_podcast_by_category(category: str, limit: int = 10, db: Session = Depends(get_db)):
+def get_podcast_by_category(category: str, limit: int = 10, db: Session = Depends(get_db)):
     return crud.get_podcasts_by_category(db, limit=limit, category=category)
 
 

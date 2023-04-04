@@ -36,19 +36,33 @@ def get_podcast(db: Session, podcast_id: int):
     return podcast_to_dict(ex)
 
 
-def get_random_podcast(db: Session, weekday: str):
-    row = db.query(Drops).filter(getattr(Drops, f"drops{weekday}") > 0).order_by(func.random()).first()
-    return row.podcast.__dict__
+def get_random_podcast(db: Session, weekday: str, limit: int = 10):
+    statement = select(Drops).where(getattr(Drops, f"drops{weekday}") > 0).order_by(func.random()).limit(limit)
+    ex = db.execute(statement).all()
+
+    return [x.Drops.podcast.__dict__ for x in ex]
 
 
 def get_podcasts_by_category(db: Session, category: str, limit: int = 10):
     # cat = db.query(Podcast, Drops.dropsMonday).join(Category, Category.podcast_id == Podcast.podcast_id).filter(
     #   Category.category == category).filter(Drops.podcast_id == Podcast.podcast_id).limit(
     #  limit).all()
-    statement = select(Podcast)
-    ex = db.execute(statement).first()
+    statement = select(Category).where(Category.category == category).limit(limit)
+    ex = db.execute(statement).all()
 
-    return podcast_to_dict(ex)
+    # return [podcast_to_dict(x.Category.podcast) for x in ex]
+    return [x.Category.podcast.__dict__ for x in ex]
+
+
+def get_random_podcasts_by_category(db: Session, category: str, limit: int = 10):
+    # cat = db.query(Podcast, Drops.dropsMonday).join(Category, Category.podcast_id == Podcast.podcast_id).filter(
+    #   Category.category == category).filter(Drops.podcast_id == Podcast.podcast_id).limit(
+    #  limit).all()
+    statement = select(Category).where(Category.category == category).limit(limit)
+    ex = db.execute(statement).all()
+
+    # return [podcast_to_dict(x.Category.podcast) for x in ex]
+    return [x.Category.podcast.__dict__ for x in ex]
 
 
 def get_categories(db: Session):
