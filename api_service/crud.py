@@ -31,7 +31,9 @@ def get_all_podcasts(db: Session, limit: int = 100):
 
 
 def get_podcast(db: Session, podcast_id: int):
-    return db.query(Podcast).filter(Podcast.id == podcast_id).first()
+    statement = select(Podcast).where(Podcast.podcast_id == podcast_id)
+    ex = db.execute(statement).first()
+    return podcast_to_dict(ex)
 
 
 def get_random_podcast(db: Session, weekday: str):
