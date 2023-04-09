@@ -1,6 +1,7 @@
 import logging
+from typing import Annotated
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Query
 from sqlalchemy.orm import Session
 
 from api_service import crud, models
@@ -38,8 +39,8 @@ def get_podcast(limit: int = 10, db: Session = Depends(get_db)):
 
 
 @app.get("/podcasts/random/{weekday}")
-def get_random_podcast(weekday: str, db: Session = Depends(get_db)):
-    return crud.get_random_podcast(db, weekday=weekday)
+def get_random_podcast(weekday: str, db: Session = Depends(get_db), cat: Annotated[list[str] | None, Query()] = None):
+    return crud.get_random_podcast(db, weekday=weekday, categories=cat)
 
 
 @app.get("/podcasts/byCategory/{category}")
