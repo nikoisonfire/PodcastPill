@@ -1,10 +1,12 @@
+import logging
+
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from api_service.models import Podcast, Category, Drops
 
 
-# Util
+## TODO: Refactor this to use a serializer
 def podcast_to_dict(row):
     to_dict = row.Podcast.__dict__
     # to_dict.pop("_sa_instance_state")
@@ -38,16 +40,30 @@ def get_podcast(db: Session, podcast_id: int):
 
 def get_random_podcast(db: Session, weekday: str, limit: int = 10, categories=None):
     if categories is not None:
+        logging.info("Categories are not none")
         statement = select(Podcast, Drops).join(Category, Category.podcast_id == Podcast.podcast_id).filter(
             getattr(Drops, f"drops{weekday}") > 0).filter(Category.category.in_(categories)).order_by(
             func.random()).limit(limit)
         ex = db.execute(statement).all()
-        return [podcast_to_dict(x) for x in ex]
+        return [x.Drops.podcast.__dict__ for x in ex]
     statement = select(Drops).where(getattr(Drops, f"drops{weekday}") > 0).order_by(func.random()).limit(limit)
     ex = db.execute(statement).all()
 
-    # return [x.Drops.podcast.__dict__ for x in ex]
-    return categories
+    return [x.Drops.podcast.__dict__ for x in ex]
+    # return categories
+
+
+def get_random_week(db: Session, categories=None):
+    weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    pod_list = []
+    for day in weekdays:
+        if categories is not None:
+            res = get_random_podcast(db, day, limit=1, categories=categories)
+            pod_list.append(res[0])
+        else:
+            res = get_random_podcast(db, day, limit=1)
+            pod_list.append(res[0])
+    return pod_list
 
 
 def get_podcasts_by_category(db: Session, category: str, limit: int = 10):
