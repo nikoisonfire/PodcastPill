@@ -23,6 +23,7 @@ def get_db():
         db.close()
 
 
+# return nothing on default
 @app.get("/")
 def root():
     return {}
