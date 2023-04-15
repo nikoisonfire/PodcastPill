@@ -48,11 +48,11 @@ def get_random_podcast(db: Session, weekday: str, limit: int = 10, categories=No
             getattr(Drops, f"drops{weekday}") > 0).filter(Category.category.in_(categories)).order_by(
             func.random()).limit(limit)
         ex = db.execute(statement).all()
-        return [x.Drops.podcast.__dict__ for x in ex]
-    statement = select(Drops).where(getattr(Drops, f"drops{weekday}") > 0).order_by(func.random()).limit(limit)
+        return [podcast_to_dict(x) for x in ex]
+    statement = select(Podcast, Drops).where(getattr(Drops, f"drops{weekday}") > 0).order_by(func.random()).limit(limit)
     ex = db.execute(statement).all()
 
-    return [x.Drops.podcast.__dict__ for x in ex]
+    return [podcast_to_dict(x) for x in ex]
     # return categories
 
 
