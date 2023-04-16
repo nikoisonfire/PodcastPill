@@ -86,5 +86,8 @@ def get_random_podcasts_by_category(db: Session, category: str, limit: int = 10)
 # get all categories
 def get_categories(db: Session):
     query = db.query(Category.category).distinct().all()
-    cats = [x for (x,) in query]
+    # return count of items of each category
+    query2 = db.query(Category.category, func.count(Category.category)).group_by(Category.category).all()
+    logging.info(query2)
+    cats = {x: y for (x, y) in query2}
     return cats
