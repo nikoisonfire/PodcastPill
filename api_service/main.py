@@ -86,7 +86,7 @@ def get_podcast_by_category(category: str, limit: int = 10, db: Session = Depend
 
 @app.get("/categories")
 def get_categories(db: Session = Depends(get_db)):
-    categories = crud.get_categories(db)
+    categories = crud.get_all_categories(db)
     if categories is None:
         raise HTTPException(status_code=404, detail="No categories found")
     return {
