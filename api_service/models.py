@@ -16,6 +16,7 @@ class Podcast(Base):
     description: str = Column(String, index=True)
     image: str = Column(String, index=True)
     weekday: str = Column(String, index=True)
+    url: str = Column(String, index=True)
 
     category: Mapped[List["Category"]] = relationship("Category", back_populates="podcast")
 
