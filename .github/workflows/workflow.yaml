@@ -35,7 +35,7 @@ jobs:
           key: ${{ secrets.DROPLET_SSH_KEY }}
           port: 22
           script: |
-            docker stop nikoisonfire/podcastpill_api || true
-            docker rm nikoisonfire/podcastpill_api || true
+            docker stop podcastpill_api || true
+            docker rm podcastpill_api || true
             docker pull nikoisonfire/podcastpill_api:latest
             docker run -d --name podcastpill_api -p 8000:80 nikoisonfire/podcastpill_api:latest
