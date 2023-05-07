@@ -1,8 +1,11 @@
 import logging
+import os
 from typing import Annotated
 
 from fastapi import FastAPI, Depends, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+
 from sqlalchemy.orm import Session
 
 from api_service import crud, models
@@ -95,3 +98,13 @@ def get_categories(db: Session = Depends(get_db)):
     return {
         "categories": categories
     }
+
+
+@app.get("/images/{podcast_id}")
+def get_image(podcast_id: int):
+    image_path = f"{os.path.dirname(__file__)}/images/{podcast_id}.jpg"
+    # make sure file exists at path
+    if not os.path.exists(image_path):
+        image_path = f"{os.path.dirname(__file__)}/images/placeholder.png"
+
+    return FileResponse(image_path)
