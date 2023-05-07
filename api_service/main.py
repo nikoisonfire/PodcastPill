@@ -106,5 +106,6 @@ def get_image(podcast_id: int):
     # make sure file exists at path
     if not os.path.exists(image_path):
         image_path = f"{os.path.dirname(__file__)}/images/placeholder.png"
+        # a
 
     return FileResponse(image_path)
