@@ -16,7 +16,7 @@ PodcastPill let's you generate a weekly schedule to listen to a new podcast ever
 # Install and use
 
 1. Clone the repo
-2. Install dependencies with `pip install -r requirements.txt`
-3. Start the venv with `source venv/bin/activate`
+2. Start the venv with `source venv/bin/activate`
+3. Install dependencies with `pip install -r requirements.txt`
 4. Run the backend with `uvicorn api_service.main:app --reload`
 5. Start coding
